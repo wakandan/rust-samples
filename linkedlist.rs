@@ -26,7 +26,9 @@ fn main() {
      * 
      * .map(|x| *x) - the for loop will chunk out references of variables
      *  in the original list. This is just to dereference each of them
-     *  before giving them out into the loop body
+     *  before giving them out into the loop body. The dereference here 
+     *  only works with implicitly copyable types, but let's just keep 
+     *  it simple for now
      * */
 	for e in v.iter().invert().map(|x| *x) { 
         /* take a minute and think about it, how are you going to 
