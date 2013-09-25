@@ -4,6 +4,56 @@ struct Node {
 	next: Option<~Node> 
 }
 
+/*print a linked list, recursively. Simple example of pattern matching*/
+fn print_linkedlist(head: Option<~Node>){
+    match head {
+        Some(~x) => {
+            print(fmt!("%? --> ", x.value));
+            print_linkedlist(x.next);
+        },
+        None => {
+            println("*");
+        }
+    }
+}
+
+/*Reverse a linked-list in-place. Notice that after this operation, the 
+* head pointer is _moved_*/
+fn reverse_linkedlist(head: Option<~Node>) -> Option<~Node> {       
+    let mut current_head = head;
+    let mut return_head = None;
+    
+    loop {
+        /*if we just use current_head here, the below won't work
+        * as it will be marked as immutable. take() basically return 
+        * the `node` inside the Option<node> and assign `None` to that
+        * variable. Here's we're matching that value*/
+        match current_head.take() {
+            Some(node) => {
+                /*make the node mutable, it seemed weird to me at first*/
+                let mut node = node;
+                /*advance the temporary head pointer. take() here
+                 * is required. If next() is not used, current_head 
+                 * will be assigned a copy of node.next(), but the 
+                 * type of node.next is not copy-able (as showned 
+                 * in the compile message). Here we assigning 
+                 * the _value_ of the pointer*/
+                current_head = node.next.take();
+                /*make the `next` pointer point backward*/
+                node.next = return_head;
+
+                return_head = Some(node);
+            }
+            None => {
+                break; // we're done
+            }
+        }
+    }
+    //return the result over here, notice it's just the variable name 
+    return_head
+}
+
+
 fn main() {	
     /*define a vector of numbers*/
 	let v = [1u,2,3,4]; 
@@ -53,4 +103,6 @@ fn main() {
          * */
 		head = Some(~Node{ value: e, next: old_head }); //(2)
 	}
+
+    print_linkedlist(head);
 }
